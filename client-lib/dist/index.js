@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VideoTranslationClient = void 0;
-// client-lib/src/index.ts
 const axios_1 = __importDefault(require("axios"));
 class VideoTranslationClient {
     constructor(baseURL) {
@@ -16,8 +15,6 @@ class VideoTranslationClient {
      * Get the current status of the job by ID
      */
     async getStatus(jobId) {
-        // Example: GET /status?job_id=someId
-        // The server will return { result: 'pending' | 'completed' | 'error' }
         const response = await this.axios.get('/status', {
             params: { job_id: jobId }
         });
@@ -36,16 +33,12 @@ class VideoTranslationClient {
             if (onPoll) {
                 onPoll(attempt, status);
             }
-            // If we are completed or error, return immediately
             if (status === 'completed' || status === 'error') {
                 return status;
             }
-            // Not done yet => wait and try again
             await new Promise(resolve => setTimeout(resolve, delay));
-            // Exponential backoff, clamped by maxDelayMs
             delay = Math.min(delay * backoffFactor, maxDelayMs);
         }
-        // If we reached maxAttempts, give up
         throw new Error(`Job ${jobId} still not completed after ${maxAttempts} attempts`);
     }
 }
