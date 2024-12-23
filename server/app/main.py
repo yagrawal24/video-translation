@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-from redis_client import r
+from .redis_client import r
 
 logging.basicConfig(level=logging.INFO)
 
