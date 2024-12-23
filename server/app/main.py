@@ -26,9 +26,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-#################
-# Rate-Limiting Middleware
-#################
 @app.middleware("http")
 async def rate_limiter(request: Request, call_next):
     """
@@ -51,10 +48,6 @@ async def rate_limiter(request: Request, call_next):
 
     return await call_next(request)
 
-
-#################
-# Routes
-#################
 @app.get("/health")
 def health_check():
     """
@@ -69,7 +62,6 @@ def root():
     Root endpoint.
     """
     return {"message": "Hello from the Video Translation Simulator!"}
-
 
 @app.get("/status")
 def get_translation_status(job_id: str = "job123"):
