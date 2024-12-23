@@ -85,33 +85,30 @@ const finalStatus = await client.waitForJobCompletion("myVideo", {
 });
 ```
 
-Testing Strategy
+#### Testing Strategy
+
 The client library implements a comprehensive testing approach with two types of tests:
 
-Unit Tests (VideoTranslationClient.test.ts)
+1. **Unit Tests** (`VideoTranslationClient.test.ts`)
 
-Tests individual client methods in isolation
-Uses Jest mocking to simulate API responses
-Verifies behavior for different scenarios:
+    - Tests individual client methods in isolation
+    - Uses Jest mocking to simulate API responses
+    - Verifies behavior for different scenarios:
+        - Successful status retrieval
+        - Job completion polling
+        - Error handling
+        - Callback execution
+        - Maximum attempts handling
 
-Successful status retrieval
-Job completion polling
-Error handling
-Callback execution
-Maximum attempts handling
-
-Integration Tests (integration.test.ts)
-
-Tests the client library against a live FastAPI server
-Spawns a local server instance during test execution
-Verifies end-to-end functionality:
-
-Real HTTP requests
-Actual job status progression
-Exponential backoff behavior
-
-Includes detailed logging for debugging
-Uses longer timeouts to accommodate real processing times
+2. **Integration Tests** (`integration.test.ts`)
+    - Tests the client library against a live FastAPI server
+    - Spawns a local server instance during test execution
+    - Verifies end-to-end functionality:
+        - Real HTTP requests
+        - Actual job status progression
+        - Exponential backoff behavior
+    - Includes detailed logging for debugging
+    - Uses longer timeouts to accommodate real processing times
 
 ### Client Application (React)
 
