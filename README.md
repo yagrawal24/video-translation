@@ -89,7 +89,7 @@ const finalStatus = await client.waitForJobCompletion("myVideo", {
 
 The client library implements a comprehensive testing approach with two types of tests:
 
-1. **Unit Tests** (`VideoTranslationClient.test.ts`)
+1. **Unit Tests** (`index.test.ts`)
 
     - Tests individual client methods in isolation
     - Uses Jest mocking to simulate API responses
