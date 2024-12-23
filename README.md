@@ -11,7 +11,7 @@ The server simulates video translation jobs with configurable durations and erro
 -   **Random Job Durations**: Each job is assigned a random completion time
 -   **Configurable Error Rates**: Status checks can randomly return errors based on probability settings
 -   **Persistent State**: Job states are maintained in Redis
--   **Rate Limiting**: Configurable request limits to prevent server overload
+-   **Rate Limiting**: Configurable request limits by IP to prevent server overload
 
 #### Endpoints
 
@@ -102,6 +102,12 @@ Demonstrates practical usage of the client library with a simple UI:
 cd server
 pip install -r requirements.txt
 uvicorn app.main:app --port 8000 --host 0.0.0.0 --reload
+```
+
+NOTE: If using conda, one might face a known issue with conda and typing-extensions where module typing-extensions is not found. Best fix is to
+
+```bash
+conda install typing-extensions
 ```
 
 ### Client Library Setup
