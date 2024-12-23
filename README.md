@@ -109,6 +109,13 @@ The client library implements a comprehensive testing approach with two types of
         - Exponential backoff behavior
     - Includes detailed logging for debugging
     - Uses longer timeouts to accommodate real processing times
+  
+Run Tests by
+```bash
+cd client-lib
+npm run build
+npm test
+```
 
 ### Client Application (React)
 
