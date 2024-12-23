@@ -2,25 +2,39 @@ import axios, { AxiosInstance } from 'axios';
 
 export type JobStatus = 'pending' | 'completed' | 'error';
 
+/**
+ * Options for {@link VideoTranslationClient.waitForJobCompletion}.
+ */
 export interface PollOptions {
-  maxAttempts?: number;
-  initialDelayMs?: number;
-  maxDelayMs?: number;
-  backoffFactor?: number;
-  onPoll?: (attempt: number, status: JobStatus) => void;
+    maxAttempts?: number;
+    initialDelayMs?: number;
+    maxDelayMs?: number;
+    backoffFactor?: number;
+    jitter?: boolean;
+    maxTotalTimeMs?: number;
+    onPoll?: (attempt: number, status: JobStatus) => void;
 }
 
+/**
+ * A client for interacting with the video translation API.
+ */
 export class VideoTranslationClient {
     private axios: AxiosInstance;
 
+    /**
+     * Create a new client.
+     *
+     * @param baseURL The base URL of the API.
+     */
     constructor(baseURL: string) {
-        this.axios = axios.create({
-            baseURL
-        });
+        this.axios = axios.create({ baseURL });
     }
 
     /**
-     * Get the current status of the job by ID
+     * Get the current status of the job by ID.
+     *
+     * @param jobId The ID of the job to get the status of.
+     * @returns The current status of the job.
      */
     public async getStatus(jobId: string): Promise<JobStatus> {
         const response = await this.axios.get('/status', {
@@ -30,7 +44,12 @@ export class VideoTranslationClient {
     }
 
     /**
-     * Poll until the job is completed or error, with exponential backoff to avoid spamming
+     * Poll until the job is completed or error, with exponential backoff (and optional jitter).
+     * Also supports maxTotalTimeMs for an overall timeout.
+     *
+     * @param jobId The ID of the job to poll.
+     * @param options The options for the poll.
+     * @returns The final status of the job.
      */
     public async waitForJobCompletion(
         jobId: string,
@@ -41,13 +60,23 @@ export class VideoTranslationClient {
             initialDelayMs = 1000,
             maxDelayMs = 10000,
             backoffFactor = 2,
+            jitter = false,
+            maxTotalTimeMs,
             onPoll
         } = options;
 
         let attempt = 0;
         let delay = initialDelayMs;
 
+        const startTime = Date.now();
+
         while (attempt < maxAttempts) {
+            if (maxTotalTimeMs && (Date.now() - startTime) >= maxTotalTimeMs) {
+                throw new Error(
+                    `Job ${jobId} not completed within maxTotalTimeMs (${maxTotalTimeMs}ms).`
+                );
+            }
+
             attempt++;
             const status = await this.getStatus(jobId);
 
@@ -60,9 +89,16 @@ export class VideoTranslationClient {
             }
 
             await new Promise(resolve => setTimeout(resolve, delay));
-            delay = Math.min(delay * backoffFactor, maxDelayMs);
+
+            let nextDelay = delay * backoffFactor;
+            if (jitter) {
+                const randomFactor = 0.5 + Math.random(); 
+                nextDelay = nextDelay * randomFactor;
+            }
+
+            delay = Math.min(nextDelay, maxDelayMs);
         }
+
         throw new Error(`Job ${jobId} still not completed after ${maxAttempts} attempts`);
     }
 }
-

@@ -10,14 +10,14 @@ from dotenv import load_dotenv
 
 from redis_client import r
 
+logging.basicConfig(level=logging.INFO)
+
 load_dotenv()
 
 origins = [
     "http://localhost:3000",
 ]
 
-
-# Read environment variables
 MAX_REQUESTS_PER_MINUTE = int(os.getenv("MAX_REQUESTS_PER_MINUTE", "5"))
 RATE_LIMIT_EXPIRATION = int(os.getenv("RATE_LIMIT_EXPIRATION", "60"))
 ERROR_PROBABILITY = float(os.getenv("ERROR_PROBABILITY", "0.1"))
@@ -127,3 +127,5 @@ def get_translation_status(job_id: str = "job123"):
         r.set(status_key, "completed")
         logging.info(f"job_id={job_id} completed after {elapsed:.1f}s (duration={job_duration}s).")
         return {"result": "completed"}
+
+
